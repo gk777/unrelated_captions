@@ -3,96 +3,94 @@
   <title>
     Unrelated Captions
   </title>
+  <meta name="description" content="Unrelated Captions: Where the picture has nothing to do with its caption
+">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.blue-pink.min.css" />
+  <script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
   <style>
-    body {
-      margin: 0;
-      padding: 0;
-    }
-  
-    #main-image-wrapper {
+    #main-image {
       display: block;
       margin: 0 auto;
-      margin-top: 40px;
       max-width: 100%;
-      padding-bottom: 100px;
+      padding-top: 30px;
+      padding-bottom: 20px;
     }
-    
-    @media only screen and (max-device-width: 480px) {
-      #main-image {
-        margin-top: 15px;
-      }
-    }
-          
-    #controls-wrapper {
-      position: fixed;
-      bottom: 0;
-      width: 100%;
-      height: 80px;
-      margin: 0 auto;
-    }
-    
+
     #controls-wrapper.at-first #go-prev {
-      display: none;
-    }
-
-    #controls-wrapper.at-last #go-next {
-      display: none;
+      visibility: hidden;
     }
     
-    #go-prev, #go-next {
-      color: white;
-      font-family: sans-serif;
-      font-size: 30px;
+    #controls-wrapper {
+      padding-top: 30px;
+      width: 200px;
+      margin: 0 auto;
       text-align: center;
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      vertical-align: middle;
-      line-height: 80px;
-      cursor: pointer;
+    }
+    
+    .logo-container {
+      background-color: #FFF;
+      height: 100%;
       box-sizing: border-box;
-      border-top: 1px solid #777;
+      padding-left: 6px;
+      padding-right: 6px;
+      width: 90%;
+      max-width: 300px;
+      border-radius: 40px;
+      overflow: hidden;
+      line-height: 56px;
+      vertical-align: middle;
     }
     
-    #go-prev {
-      background-color: red;
-      width: 35%;
-      left: 0;
+    .logo-container img {
+      width: 100%;
     }
     
-    #go-prev:hover {
-      box-shadow: 0px 0px 5px black;;
-    }
-    
-    #go-next {
-      background-color: green;
-      left: 35%;
-      right: 0;
-    }
-    
-    #go-next:hover {
-      box-shadow: 0px 0px 5px black;;
-    }
-
   </style>
 </head>
 <body>
-  <div class="main-image-wrapper">
-    <img id="main-image"/>
-  </div>
-  <div id="controls-wrapper">
-    <div id="go-prev" onclick="javascript:navigateToPreviousImage();">
-      Back
+    <!-- see https://getmdl.io/components/index.html#layout-section for more info -->
+    <!-- Always shows a header, even in smaller screens. -->
+    <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+      <header class="mdl-layout__header">
+        <div class="mdl-layout__header-row">
+          <div class="logo-container">
+            <img src="/header2.png" title="Unrelated Captions: Where the picture has nothing to do with its caption.">
+          </div>
+
+        </div>
+      </header>
+      <div class="mdl-layout__drawer">
+        <nav class="mdl-navigation">
+          <a class="mdl-navigation__link" href="https://www.paypal.me/gkhalsa415">Help me keep it running!</a>
+        </nav>
+      </div>
+      <main class="mdl-layout__content">
+        <div id="controls-wrapper">
+          <button id="go-prev" class="mdl-button mdl-js-button mdl-button--raised mdl-button--raised"
+            onclick="javascript:navigateToPreviousImage();"
+          >
+            Back
+          </button>
+          <button id="go-next" class="mdl-button mdl-js-button mdl-button--raised mdl-button--accent"
+            onclick="javascript:navigateToNextImage();"
+          >
+            Next
+          </button>
+        </div>
+        <div class="page-content">
+          <img id="main-image"/>          
+        </div>
+      </main>
     </div>
-    <div id="go-next" onclick="javascript:navigateToNextImage();">
-      Next
-    </div>
-  </div>
+  
   <script>
   (function() {
     var HIGHEST_IMAGE_ID = 3851;
     var visitedImages = 0;
+    var pageContent =document.getElementsByClassName('page-content')[0];
+
   
     function updateHistory(imageId) {
       if (window.history && window.history.pushState){
@@ -101,37 +99,45 @@
     };
   
     function updateImage(imageId) {
-      document.getElementById('main-image').src = '/captioned_images/' + imageId + '.jpg';
-    };
-    
-    function updateControls(imageId) {
-      document.getElementById('controls-wrapper').className = '';
-      if (imageId == 1) {
+      // update the UI to reflect the new image, and hide the back button if it is the first one
+      var newImage = new Image();
+      newImage.src =  '/captioned_images/' + imageId + '.jpg';
+      newImage.id = 'main-image';
+      pageContent.innerHTML = '';
+      pageContent.appendChild(newImage);
+      if (visitedImages === 1) {
         document.getElementById('controls-wrapper').className = 'at-first';
-      } else if (imageId == HIGHEST_IMAGE_ID) {
-        document.getElementById('controls-wrapper').className = 'at-last';
+      } else {
+        document.getElementById('controls-wrapper').className = '';
       }
     };
+    
+    /*
+      Our plan here is to just randomize which new image shows up,
+      and just use the browser history to navigate back through the images you have seen.
+    */
     
     window.navigateToNewImage = function(newImageId) {
       visitedImages ++;
       updateHistory(newImageId);
       updateImage(newImageId);
-      updateControls(newImageId);
     };
     
     window.navigateToNextImage = function() {
-      var nextImageId = Math.floor(Math.Random() * 3851) + 1;
+      var nextImageId = Math.floor(Math.random() * 3851) + 1;
       window.navigateToNewImage(nextImageId);
     };
     
     window.navigateToPreviousImage = function() {
-      if (visitedImages > 0) {
+      // once there are no more images in the history to go back to
+      // this becomes a no-op
+      if (visitedImages > 1) {
         visitedImages --;        
         window.history.back();
       }
     };
 
+    // bind left and right arrows
 
     window.addEventListener('keyup', function(e) {
       if (e.keyCode == 37 && imageId > 1) {
@@ -151,8 +157,11 @@
     });
     
     function onInit(){
-      updateControls();
-      navigateToNewImage();
+      if (window.history && history.state && history.state.imageId) {
+        navigateToNewImage(history.state.imageId);
+      } else {
+        navigateToNextImage();
+      }
     }
     
     onInit();

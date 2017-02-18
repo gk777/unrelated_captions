@@ -1,0 +1,8 @@
+{
+  "devDependencies": {
+    "pushstate-server": "^2.2.1"
+  },
+  "scripts": {
+    "serve": "pushstate-server ./ 4000"
+  }
+}
