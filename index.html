@@ -89,7 +89,7 @@
   (function() {
     var HIGHEST_IMAGE_ID = 3851;
     var visitedImages = 0;
-    var pageContent =document.getElementsByClassName('page-content')[0];
+    var pageContent = document.getElementsByClassName('page-content')[0];
 
   
     function updateHistory(imageId) {
@@ -124,7 +124,7 @@
     };
     
     window.navigateToNextImage = function() {
-      var nextImageId = Math.floor(Math.random() * 3851) + 1;
+      var nextImageId = Math.floor(Math.random() * HIGHEST_IMAGE_ID) + 1;
       window.navigateToNewImage(nextImageId);
     };
     
@@ -140,10 +140,10 @@
     // bind left and right arrows
 
     window.addEventListener('keyup', function(e) {
-      if (e.keyCode == 37 && imageId > 1) {
+      if (e.keyCode == 37) {
         navigateToPreviousImage();
 
-      } else if (e.keyCode == 39 && imageId < HIGHEST_IMAGE_ID) {
+      } else if (e.keyCode == 39) {
         navigateToNextImage();
       }
     }, false);
