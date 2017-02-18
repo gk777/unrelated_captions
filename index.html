@@ -88,52 +88,44 @@
   <script>
   (function() {
     var HIGHEST_IMAGE_ID = 3851;
-    var visitedImages = 0;
+    var visitedImages = [];
+    var nextImagesToVisit = [];
     var pageContent = document.getElementsByClassName('page-content')[0];
 
-  
-    function updateHistory(imageId) {
-      if (window.history && window.history.pushState){
-        window.history.pushState({imageId:imageId}, null, '/' + imageId);
-      }
-    };
-  
+
     function updateImage(imageId) {
-      // update the UI to reflect the new image, and hide the back button if it is the first one
+      // update history to reflect new image
+      if (window.history && window.history.replaceState){
+        window.history.replaceState({imageId:imageId}, null, '/' + imageId);
+      }
+      // update the UI to reflect the new image, and hide the back button if it is the first one      
       var newImage = new Image();
       newImage.src =  '/captioned_images/' + imageId + '.jpg';
       newImage.id = 'main-image';
       pageContent.innerHTML = '';
       pageContent.appendChild(newImage);
-      if (visitedImages === 1) {
+      if (visitedImages.length === 1) {
         document.getElementById('controls-wrapper').className = 'at-first';
       } else {
         document.getElementById('controls-wrapper').className = '';
       }
     };
     
-    /*
-      Our plan here is to just randomize which new image shows up,
-      and just use the browser history to navigate back through the images you have seen.
-    */
-    
-    window.navigateToNewImage = function(newImageId) {
-      visitedImages ++;
-      updateHistory(newImageId);
-      updateImage(newImageId);
-    };
     
     window.navigateToNextImage = function() {
-      var nextImageId = Math.floor(Math.random() * HIGHEST_IMAGE_ID) + 1;
-      window.navigateToNewImage(nextImageId);
+      if (!nextImagesToVisit.length) {
+        nextImagesToVisit.push(Math.floor(Math.random() * HIGHEST_IMAGE_ID) + 1)
+      }
+      visitedImages.push(nextImagesToVisit.pop());
+      updateImage(visitedImages[visitedImages.length-1]);
     };
     
     window.navigateToPreviousImage = function() {
       // once there are no more images in the history to go back to
       // this becomes a no-op
-      if (visitedImages > 1) {
-        visitedImages --;        
-        window.history.back();
+      if (visitedImages.length > 1) {
+        nextImagesToVisit.push(visitedImages.pop());
+        updateImage(visitedImages[visitedImages.length-1]);
       }
     };
 
@@ -147,21 +139,19 @@
         navigateToNextImage();
       }
     }, false);
-  
-    window.addEventListener('popstate', function(e) {
-      if (e.state) {
-        updateImage(e.state.imageId);
-      } else {
-        window.location.reload();
-      }
-    });
+
     
     function onInit(){
-      if (window.history && history.state && history.state.imageId) {
-        navigateToNewImage(history.state.imageId);
-      } else {
-        navigateToNextImage();
+      var imageIdFromURL = window.location.pathname.split('/')[1];
+      if (imageIdFromURL) {
+        nextImagesToVisit.push(parseInt(imageIdFromURL));
+        // add meta tag reflective of the new url
+        var meta = document.createElement('meta');
+        meta.name = "og:image";
+        meta.content = "/captioned_images/" + imageIdFromURL + '.jpg';
+        document.getElementsByTagName('head')[0].appendChild(meta);
       }
+      navigateToNextImage();
     }
     
     onInit();
