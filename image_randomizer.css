@@ -1,0 +1,36 @@
+#main-image {
+  display: block;
+  margin: 0 auto;
+  max-width: 100%;
+  padding-top: 30px;
+  padding-bottom: 20px;
+}
+
+#controls-wrapper.at-first #go-prev {
+  visibility: hidden;
+}
+
+#controls-wrapper {
+  padding-top: 30px;
+  width: 200px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.logo-container {
+  background-color: #FFF;
+  height: 100%;
+  box-sizing: border-box;
+  padding-left: 6px;
+  padding-right: 6px;
+  width: 90%;
+  max-width: 300px;
+  border-radius: 40px;
+  overflow: hidden;
+  line-height: 56px;
+  vertical-align: middle;
+}
+
+.logo-container img {
+  width: 100%;
+}

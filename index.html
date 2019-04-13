@@ -6,48 +6,10 @@
   <meta name="description" content="Unrelated Captions: Where the picture has nothing to do with its caption
 ">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
   <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.blue-pink.min.css" />
   <script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
-  <style>
-    #main-image {
-      display: block;
-      margin: 0 auto;
-      max-width: 100%;
-      padding-top: 30px;
-      padding-bottom: 20px;
-    }
-
-    #controls-wrapper.at-first #go-prev {
-      visibility: hidden;
-    }
-    
-    #controls-wrapper {
-      padding-top: 30px;
-      width: 200px;
-      margin: 0 auto;
-      text-align: center;
-    }
-    
-    .logo-container {
-      background-color: #FFF;
-      height: 100%;
-      box-sizing: border-box;
-      padding-left: 6px;
-      padding-right: 6px;
-      width: 90%;
-      max-width: 300px;
-      border-radius: 40px;
-      overflow: hidden;
-      line-height: 56px;
-      vertical-align: middle;
-    }
-    
-    .logo-container img {
-      width: 100%;
-    }
-    
-  </style>
+  <link rel="stylesheet" href="/image_randomizer.css"/>
 </head>
 <body>
     <!-- see https://getmdl.io/components/index.html#layout-section for more info -->
@@ -63,7 +25,7 @@
       </header>
       <div class="mdl-layout__drawer">
         <nav class="mdl-navigation">
-          <a class="mdl-navigation__link" href="https://www.paypal.me/gkhalsa415">Help me keep it running!</a>
+          <a class="mdl-navigation__link" href="https://www.gurukhalsa.me" target="_blank">About the author</a>
         </nav>
       </div>
       <main class="mdl-layout__content">
@@ -85,78 +47,8 @@
       </main>
     </div>
   
+  <script src="/image_randomizer.js"></script>
   <script>
-  (function() {
-    var HIGHEST_IMAGE_ID = 3851;
-    var visitedImages = [];
-    var nextImagesToVisit = [];
-    var pageContent = document.getElementsByClassName('page-content')[0];
-
-
-    function updateImage(imageId) {
-      // update history to reflect new image
-      if (window.history && window.history.replaceState){
-        window.history.replaceState({imageId:imageId}, null, '/' + imageId);
-      }
-      // update the UI to reflect the new image, and hide the back button if it is the first one      
-      var newImage = new Image();
-      newImage.src =  '/captioned_images/' + imageId + '.jpg';
-      newImage.id = 'main-image';
-      pageContent.innerHTML = '';
-      pageContent.appendChild(newImage);
-      if (visitedImages.length === 1) {
-        document.getElementById('controls-wrapper').className = 'at-first';
-      } else {
-        document.getElementById('controls-wrapper').className = '';
-      }
-    };
-    
-    
-    window.navigateToNextImage = function() {
-      if (!nextImagesToVisit.length) {
-        nextImagesToVisit.push(Math.floor(Math.random() * HIGHEST_IMAGE_ID) + 1)
-      }
-      visitedImages.push(nextImagesToVisit.pop());
-      updateImage(visitedImages[visitedImages.length-1]);
-    };
-    
-    window.navigateToPreviousImage = function() {
-      // once there are no more images in the history to go back to
-      // this becomes a no-op
-      if (visitedImages.length > 1) {
-        nextImagesToVisit.push(visitedImages.pop());
-        updateImage(visitedImages[visitedImages.length-1]);
-      }
-    };
-
-    // bind left and right arrows
-
-    window.addEventListener('keyup', function(e) {
-      if (e.keyCode == 37) {
-        navigateToPreviousImage();
-
-      } else if (e.keyCode == 39) {
-        navigateToNextImage();
-      }
-    }, false);
-
-    
-    function onInit(){
-      var imageIdFromURL = window.location.pathname.split('/')[1];
-      if (imageIdFromURL) {
-        nextImagesToVisit.push(parseInt(imageIdFromURL));
-        // add meta tag reflective of the new url
-        var meta = document.createElement('meta');
-        meta.name = "og:image";
-        meta.content = "/captioned_images/" + imageIdFromURL + '.jpg';
-        document.getElementsByTagName('head')[0].appendChild(meta);
-      }
-      navigateToNextImage();
-    }
-    
-    onInit();
-
-  })();
-
+    setupImageRandomizer(3851);
   </script>
 </body>
