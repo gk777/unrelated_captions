@@ -1,7 +1,6 @@
 
-window.setupImageRandomizer = function(HIGHEST_IMAGE_ID, ) {
+window.setupImageRandomizer = function(HIGHEST_IMAGE_ID) {
 
-  var HIGHEST_IMAGE_ID = 3851;
   var visitedImages = [];
   var nextImagesToVisit = [];
   var pageContent = document.getElementsByClassName('page-content')[0];
